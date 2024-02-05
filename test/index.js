@@ -26,33 +26,25 @@ describe("e2e test for rwatch core lib", function () {
     re: "0",
     hostInfo
   };
-  let id;
-  afterEach((done) => {
-    const request = getRequest(id);
-    if (request && request.ee) {
-      request.ee.on("done", () => { done(); });
-    } else {
-      done();
-    }
-    id = null;
-  });
   describe("test for addRequest", () => {
     it("should add request and get id string", () => {
-      id = addRequest(arg);
+      const id = addRequest(arg);
       expect(id).to.be.a("string");
+      delRequest(id);
     });
     it("allow multiple call with same id ", () => {
       const arg2 = structuredClone(arg);
       arg2.maxCount = 2;
       delete arg2.re;
-      id = addRequest(arg2);
       const arg3 = structuredClone(arg2);
+      const id = addRequest(arg2);
       arg3.id = id;
       const id2 = addRequest(arg3);
       const id3 = addRequest(arg3);
       expect(id).to.be.a("string");
       expect(id2).to.equal(id);
       expect(id3).to.equal(id);
+      delRequest(id);
     });
     it("should reject if arg does not have cmd", () => {
       const arg2 = structuredClone(arg);
@@ -86,6 +78,7 @@ describe("e2e test for rwatch core lib", function () {
     });
   });
   describe("test for delRequest", () => {
+    let id;
     beforeEach(() => {
       id = addRequest(arg);
     });
@@ -94,11 +87,13 @@ describe("e2e test for rwatch core lib", function () {
     });
   });
   describe("test for getRequest", () => {
+    let id;
     beforeEach(() => {
       id = addRequest(arg);
     });
     it("should get request object", () => {
       expect(getRequest(id)).to.own.include({ argument: arg.argument, checkCount: 0 });
+      delRequest(id);
     });
   });
   describe("test about actual rwatch behavier", () => {
@@ -115,7 +110,7 @@ describe("e2e test for rwatch core lib", function () {
     it("should emit 'failed' when max count exceeded", (done) => {
       arg2.re = "[0-5]";
       arg2.maxCount = 1;
-      id = addRequest(arg2);
+      const id = addRequest(arg2);
       const request = getRequest(id);
       request.ee.on("finished", finishedCb);
       request.ee.on("checked", checkedCb);
@@ -134,7 +129,7 @@ describe("e2e test for rwatch core lib", function () {
       arg2.re = "hoge";
       arg2.maxCount = 1;
       arg2.until = true;
-      id = addRequest(arg2);
+      const id = addRequest(arg2);
       const request = getRequest(id);
       request.ee.on("finished", finishedCb);
       request.ee.on("checked", checkedCb);
