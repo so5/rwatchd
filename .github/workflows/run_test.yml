@@ -1,0 +1,42 @@
+name: run UT
+on:
+  push:
+    tags-ignore:
+      - 'v*'
+    branches:
+      - '*'
+      - '!main'
+  workflow_call:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    services:
+      testbed:
+        image: naoso5/test-sshd
+        ports:
+          - 10022:22
+    env:
+      TEST_USER: testuser
+      TEST_PW: passw0rd
+      TEST_PORT: 10022
+      DEBUG: 'ssh*'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm run test
+      - run: npm run coverage
+      - uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: coverage-report.lcov
+          retention-days: 1
