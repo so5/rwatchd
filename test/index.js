@@ -15,7 +15,8 @@ const hostInfo = require("./testUtil/hostInfo.js");
 const {
   addRequest,
   delRequest,
-  getRequest
+  getRequest,
+  clearAll
 } = require("../lib/index.js");
 
 describe("e2e test for rwatch core lib", function () {
@@ -26,11 +27,13 @@ describe("e2e test for rwatch core lib", function () {
     re: "0",
     hostInfo
   };
+  afterEach(async () => {
+    await clearAll();
+  });
   describe("test for addRequest", () => {
     it("should add request and get id string", () => {
       const id = addRequest(arg);
       expect(id).to.be.a("string");
-      delRequest(id);
     });
     it("allow multiple call with same id ", () => {
       const arg2 = structuredClone(arg);
@@ -44,7 +47,6 @@ describe("e2e test for rwatch core lib", function () {
       expect(id).to.be.a("string");
       expect(id2).to.equal(id);
       expect(id3).to.equal(id);
-      delRequest(id);
     });
     it("should reject if arg does not have cmd", () => {
       const arg2 = structuredClone(arg);
@@ -82,8 +84,18 @@ describe("e2e test for rwatch core lib", function () {
     beforeEach(() => {
       id = addRequest(arg);
     });
-    it("should delete request from queue", () => {
+    it("should return true", () => {
       expect(delRequest(id)).to.be.true;
+    });
+    it("should return false if request ID is not existing request's id", () => {
+      expect(delRequest("hoge")).to.be.false;
+    });
+    it("should return false when you try to delete retired request", (done) => {
+      const req = getRequest(id);
+      req.event.on("done", () => {
+        expect(delRequest(id)).to.be.false;
+        done();
+      });
     });
   });
   describe("test for getRequest", () => {
@@ -93,7 +105,27 @@ describe("e2e test for rwatch core lib", function () {
     });
     it("should get request object", () => {
       expect(getRequest(id)).to.own.include({ argument: arg.argument, checkCount: 0 });
-      delRequest(id);
+    });
+    it("should get undefined if request ID is not existing request's id", () => {
+      expect(getRequest("hoge")).to.be.undefined;
+    });
+    it("should get distilled request object if it is retired", (done) => {
+      const req = getRequest(id);
+      req.event.on("done", () => {
+        const result = getRequest(id);
+        expect(result.id).to.equal(id);
+        expect(result.argument).to.equal("");
+        expect(result.checkCount).to.be.a("number");
+        expect(result.lastOutput).to.have.string("\n");
+        expect(result.re).to.equal(arg.re);
+        expect(result.cmd).to.equal(arg.cmd);
+        expect(result.hostInfo.host).to.equal(hostInfo.host);
+        expect(result.hostInfo.user).to.equal(hostInfo.user);
+        expect(result.hostInfo.port).to.equal(hostInfo.port);
+        expect(result.hostInfo.password).to.equal(hostInfo.password);
+        expect(result.hostInfo.noStrictHostkeyChecking).to.equal(hostInfo.noStrictHostkeyChecking);
+        done();
+      });
     });
   });
   describe("test about actual rwatch behavier", () => {
@@ -112,16 +144,16 @@ describe("e2e test for rwatch core lib", function () {
       arg2.maxCount = 1;
       const id = addRequest(arg2);
       const request = getRequest(id);
-      request.ee.on("finished", finishedCb);
-      request.ee.on("checked", checkedCb);
-      request.ee.on("failed", failedCb);
+      request.event.on("finished", finishedCb);
+      request.event.on("checked", checkedCb);
+      request.event.on("failed", failedCb);
       // we expect call back will be executed in order of registering
-      request.ee.on("done", () => {
+      request.event.on("done", () => {
         expect(finishedCb).not.to.be.called;
         expect(checkedCb).to.be.calledOnce;
         expect(failedCb).to.be.calledOnce;
       });
-      request.ee.on("done", () => {
+      request.event.on("done", () => {
         done();
       });
     });
@@ -131,16 +163,16 @@ describe("e2e test for rwatch core lib", function () {
       arg2.until = true;
       const id = addRequest(arg2);
       const request = getRequest(id);
-      request.ee.on("finished", finishedCb);
-      request.ee.on("checked", checkedCb);
-      request.ee.on("failed", failedCb);
+      request.event.on("finished", finishedCb);
+      request.event.on("checked", checkedCb);
+      request.event.on("failed", failedCb);
 
-      request.ee.on("done", () => {
+      request.event.on("done", () => {
         expect(finishedCb).not.to.be.called;
         expect(checkedCb).to.be.calledOnce;
         expect(failedCb).to.be.calledOnce;
       });
-      request.ee.on("done", () => {
+      request.event.on("done", () => {
         done();
       });
     });
