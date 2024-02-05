@@ -1,0 +1,24 @@
+{
+  "env": {
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+  "settings": {
+    "node": {
+      "allowModules": [
+        "chai",
+        "sinon",
+        "sinon-chai",
+        "rewire"
+      ]
+    }
+  },
+  "plugins": [
+    "chai-expect",
+    "chai-friendly"
+  ],
+  "rules": {
+    "no-unused-expressions": 0
+  }
+}

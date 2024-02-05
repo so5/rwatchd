@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+$(dirname $(dirname -- "$0"))/run_test.sh

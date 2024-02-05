@@ -1,0 +1,55 @@
+{
+  "name": "rwatchd",
+  "version": "0.1.0",
+  "description": "Remote WATCH Daemon",
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">=19"
+  },
+  "scripts": {
+    "mocha": "mocha --recursive test",
+    "lint": "eslint --fix lib test",
+    "test": "nyc --reporter=html --reporter=text mocha",
+    "coverage": "nyc report --reporter=text-lcov > coverage-report.lcov",
+    "postversion": "git push && git push origin $(git describe --abbrev=0 --tags)",
+    "knip": "knip"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/so5/rwatchd.git"
+  },
+  "author": "Naoyuki Sogo <sogo@longtail-software.co.jp>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/so5/rwatchd/issues"
+  },
+  "homepage": "https://github.com/so5/rwatchd#readme",
+  "lint-staged": {
+    "*.js": "eslint --fix"
+  },
+  "devDependencies": {
+    "chai": "^4.4.1",
+    "eslint": "^8.56.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-chai-expect": "^3.0.0",
+    "eslint-plugin-chai-friendly": "^0.7.4",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "husky": "^9.0.9",
+    "knip": "^4.3.1",
+    "lint-staged": "^15.2.1",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "rewire": "^7.0.0",
+    "sinon": "^17.0.1",
+    "sinon-chai": "^3.7.0"
+  },
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "ajv-keywords": "^5.1.0",
+    "debug": "^4.3.4",
+    "simple-batch-system": "^1.19.0",
+    "ssh-client-wrapper": "^2.2.3"
+  }
+}
