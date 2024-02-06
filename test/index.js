@@ -147,13 +147,10 @@ describe("e2e test for rwatch core lib", function () {
       request.event.on("finished", finishedCb);
       request.event.on("checked", checkedCb);
       request.event.on("failed", failedCb);
-      // we expect call back will be executed in order of registering
       request.event.on("done", () => {
         expect(finishedCb).not.to.be.called;
         expect(checkedCb).to.be.calledOnce;
         expect(failedCb).to.be.calledOnce;
-      });
-      request.event.on("done", () => {
         done();
       });
     });
@@ -171,8 +168,28 @@ describe("e2e test for rwatch core lib", function () {
         expect(finishedCb).not.to.be.called;
         expect(checkedCb).to.be.calledOnce;
         expect(failedCb).to.be.calledOnce;
+        done();
       });
+    });
+    it("should consolidate arguments for same command on same host", (done) => {
+      arg2.cmd = "echo";
+      arg2.re = "5";
+      arg2.argument = 1;
+      arg2.until = true;
+      const id = addRequest(arg2);
+      for (let i = 2; i < 6; i++) {
+        arg2.argument = i;
+        addRequest(arg2);
+      }
+
+      const request = getRequest(id);
+      request.event.on("finished", finishedCb);
+      request.event.on("failed", failedCb);
+
       request.event.on("done", () => {
+        expect(finishedCb).to.be.calledOnce;
+        expect(failedCb).not.to.be.called;
+        expect(request.lastOutput).to.be.equal("1 2 3 4 5\n");
         done();
       });
     });
