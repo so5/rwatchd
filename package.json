@@ -49,6 +49,7 @@
     "ajv": "^8.12.0",
     "ajv-keywords": "^5.1.0",
     "debug": "^4.3.4",
+    "shlex": "^2.1.2",
     "simple-batch-system": "^1.19.0",
     "ssh-client-wrapper": "^2.2.3"
   }
