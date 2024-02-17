@@ -125,8 +125,57 @@ describe("e2e test for rwatch core lib", function () {
       expect(result.hostInfo.host).to.equal(hostInfo.host);
       expect(result.hostInfo.user).to.equal(hostInfo.user);
       expect(result.hostInfo.port).to.equal(hostInfo.port);
-      expect(result.hostInfo.password).to.equal(hostInfo.password);
+      expect(result.hostInfo.password).to.be.undefined;
       expect(result.hostInfo.noStrictHostkeyChecking).to.equal(hostInfo.noStrictHostkeyChecking);
+    });
+  });
+  describe("test for argument check behavier", () => {
+    let arg2;
+    let id;
+    const foo = "foo";
+    const bar = () => {};
+    const baz = null;
+    beforeEach(() => {
+      arg2 = structuredClone(arg);
+      arg2.foo = foo;
+      arg2.bar = bar;
+      arg2.baz = baz;
+      arg2.hostInfo.foo = foo;
+      arg2.hostInfo.bar = bar;
+      arg2.hostInfo.baz = baz;
+      id = addRequest(arg);
+    });
+    it("should keep additional properties only in argument object", async () => {
+      const request = getRequest(id);
+      expect(arg2.foo).to.be.equal(foo);
+      expect(arg2.bar).to.be.equal(bar);
+      expect(arg2.baz).to.be.equal(baz);
+      expect(arg2.hostInfo.foo).to.be.equal(foo);
+      expect(arg2.hostInfo.bar).to.be.equal(bar);
+      expect(arg2.hostInfo.baz).to.be.equal(baz);
+      expect(request.foo).to.be.undefined;
+      expect(request.bar).to.be.undefined;
+      expect(request.baz).to.be.undefined;
+      expect(request.hostInfo.foo).undefined;
+      expect(request.hostInfo.bar).undefined;
+      expect(request.hostInfo.baz).undefined;
+
+      await new Promise((resolve) => {
+        request.event.on("done", resolve);
+      });
+    });
+    it("should not keep additional properties in result object", async () => {
+      const request = getRequest(id);
+      await new Promise((resolve) => {
+        request.event.on("done", resolve);
+      });
+      const result = getRequest(id);
+      expect(result.foo).to.be.undefined;
+      expect(result.bar).to.be.undefined;
+      expect(result.baz).to.be.undefined;
+      expect(result.hostInfo.foo).undefined;
+      expect(result.hostInfo.bar).undefined;
+      expect(result.hostInfo.baz).undefined;
     });
   });
   describe("test about actual rwatch behavier", () => {
