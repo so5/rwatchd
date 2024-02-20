@@ -302,6 +302,22 @@ describe("e2e test for rwatch core lib", function () {
       expect(checkedCb).to.have.callCount(3);
       expect(failedCb).to.be.calledOnce;
     });
+    it("should keep watching if cmd returns empty string and it does not match re numAllowFirstFewEmptyOutput times", async () => {
+      arg2.cmd = "echo";
+      arg2.re = "[0-5]";
+      arg2.numAllowFirstFewEmptyOutput = 3;
+      const id = addRequest(arg2);
+      const request = getRequest(id);
+      request.event.on("finished", finishedCb);
+      request.event.on("checked", checkedCb);
+      request.event.on("failed", failedCb);
+      await new Promise((resolve) => {
+        request.event.on("done", resolve);
+      });
+      expect(finishedCb).to.be.calledOnce;
+      expect(checkedCb).to.have.callCount(2);
+      expect(failedCb).not.to.be.called;
+    });
     describe("test about hook", () => {
       const hostname = os.hostname();
       it("should execute finishedHook only once if watch request successfully finished", async () => {
