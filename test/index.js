@@ -145,7 +145,7 @@ describe("e2e test for rwatch core lib", function () {
       arg2.hostInfo.baz = baz;
       id = addRequest(arg);
     });
-    it("should keep additional properties only in argument object", async () => {
+    it("should keep additional properties in argument object and not in request object", async () => {
       const request = getRequest(id);
       expect(arg2.foo).to.be.equal(foo);
       expect(arg2.bar).to.be.equal(bar);
@@ -160,7 +160,7 @@ describe("e2e test for rwatch core lib", function () {
       expect(request.hostInfo.bar).undefined;
       expect(request.hostInfo.baz).undefined;
 
-      await new Promise((resolve) => {
+      return new Promise((resolve) => {
         request.event.on("done", resolve);
       });
     });
@@ -284,6 +284,23 @@ describe("e2e test for rwatch core lib", function () {
       expect(finishedCb).to.be.calledOnce;
       expect(failedCb).not.to.be.called;
       expect(request.lastOutput).to.equal(hostname + "\n");
+    });
+    it("should keep watching if cmd returns empty string and it does not match re", async () => {
+      arg2.cmd = "echo";
+      arg2.re = "[0-5]";
+      arg2.maxCount = 3;
+      arg2.allowEmptyOutput = true;
+      const id = addRequest(arg2);
+      const request = getRequest(id);
+      request.event.on("finished", finishedCb);
+      request.event.on("checked", checkedCb);
+      request.event.on("failed", failedCb);
+      await new Promise((resolve) => {
+        request.event.on("done", resolve);
+      });
+      expect(finishedCb).not.to.be.called;
+      expect(checkedCb).to.have.callCount(3);
+      expect(failedCb).to.be.calledOnce;
     });
     describe("test about hook", () => {
       const hostname = os.hostname();

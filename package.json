@@ -51,6 +51,6 @@
     "debug": "^4.3.4",
     "shlex": "^2.1.2",
     "simple-batch-system": "^1.19.0",
-    "ssh-client-wrapper": "^2.2.3"
+    "ssh-client-wrapper": "^2.4.0"
   }
 }
