@@ -1,6 +1,6 @@
 {
   "name": "rwatchd",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Remote WATCH Daemon",
   "main": "lib/index.js",
   "engines": {
