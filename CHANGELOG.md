@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/so5/rwatchd/compare/v0.7.0...v0.7.1) (2025-08-21)
+
+
+### Bug Fixes
+
+* **ci:** fetch full git history for semantic-release ([045c604](https://github.com/so5/rwatchd/commit/045c604681138349b8bf9c7d1095f60d5671a94e))
+
 # [0.7.0](https://github.com/so5/rwatchd/compare/v0.6.0...v0.7.0) (2025-08-21)
 
 
