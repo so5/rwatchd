@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/so5/rwatchd/compare/v0.7.1...v1.0.0) (2025-08-21)
+
+
+### Features
+
+* add comprehensive documentation to README.md ([7c33f65](https://github.com/so5/rwatchd/commit/7c33f65acadab77028cad6b8c8807ddd41ce0d67))
+
+
+### BREAKING CHANGES
+
+* This release marks the official v1.0.0 stabilization of the API.
+
 ## [0.7.1](https://github.com/so5/rwatchd/compare/v0.7.0...v0.7.1) (2025-08-21)
 
 
