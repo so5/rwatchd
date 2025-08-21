@@ -12,8 +12,7 @@
     "lint": "eslint --fix .",
     "test": "c8 --reporter=html --reporter=text mocha",
     "coverage": "c8 report --reporter=text-lcov > coverage-report.lcov",
-    "postversion": "git push && git push origin $(git describe --abbrev=0 --tags)",
-    "knip": "knip"
+    "postversion": "git push && git push origin $(git describe --abbrev=0 --tags)"
   },
   "repository": {
     "type": "git",
@@ -38,16 +37,16 @@
     "eslint-plugin-jsdoc": "^48.2.6",
     "globals": "^15.2.0",
     "husky": "^9.0.9",
-    "knip": "^5.10.0",
     "lint-staged": "^15.2.1",
-    "mocha": "^10.2.0",
-    "sinon": "^17.0.1"
+    "mocha": "^10.4.0",
+    "sinon": "^18.0.0",
+    "sinon-chai": "^3.7.0"
   },
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
-    "debug": "^4.4.0",
-    "shlex": "^2.1.2",
+    "debug": "^4.3.5",
+    "shlex": "^3.0.0",
     "ssh-client-wrapper": "^2.6.2",
     "simple-batch-system": "^1.21.0"
   }
