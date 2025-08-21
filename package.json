@@ -48,6 +48,6 @@
     "debug": "^4.3.5",
     "shlex": "^3.0.0",
     "ssh-client-wrapper": "^2.6.2",
-    "simple-batch-system": "^1.21.0"
+    "simple-batch-system": "^2.1.0"
   }
 }
