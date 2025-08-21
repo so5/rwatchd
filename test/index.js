@@ -1,24 +1,16 @@
-"use strict";
-process.on("unhandledRejection", console.dir); // eslint-disable-line no-console
-Error.traceLimit = 100000;
-const os = require("os");
-
-// setup test framework
-const chai = require("chai");
-const { expect } = chai;
-const sinon = require("sinon");
-chai.use(require("sinon-chai"));
-
-// helper
-const hostInfo = require("./testUtil/hostInfo.js");
-
-// testee
-const {
+import os from "os";
+import { expect } from "chai";
+import sinon from "sinon";
+import hostInfo from "./testUtil/hostInfo.js";
+import {
   addRequest,
   delRequest,
   getRequest,
   clearAll
-} = require("../lib/index.js");
+} from "../lib/index.js";
+
+process.on("unhandledRejection", console.dir); // eslint-disable-line no-console
+Error.traceLimit = 100000;
 
 describe("e2e test for rwatch core lib", function () {
   this.timeout(20000);
@@ -200,9 +192,9 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).not.to.be.called;
-      expect(checkedCb).to.be.calledOnce;
-      expect(failedCb).to.be.calledOnce;
+      sinon.assert.notCalled(finishedCb);
+      sinon.assert.calledOnce(checkedCb);
+      sinon.assert.calledOnce(failedCb);
     });
     it("should emit 'failed' if until is set and re never match", async () => {
       arg2.re = "hoge";
@@ -217,9 +209,9 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).not.to.be.called;
-      expect(checkedCb).to.be.calledOnce;
-      expect(failedCb).to.be.calledOnce;
+      sinon.assert.notCalled(finishedCb);
+      sinon.assert.calledOnce(checkedCb);
+      sinon.assert.calledOnce(failedCb);
     });
     it("should consolidate arguments for same command on same host", async () => {
       arg2.cmd = "echo";
@@ -239,8 +231,8 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).to.be.calledOnce;
-      expect(failedCb).not.to.be.called;
+      sinon.assert.calledOnce(finishedCb);
+      sinon.assert.notCalled(failedCb);
       expect(request.lastOutput).to.be.equal("1 2 3 4 5\n");
     });
     it("should issue command directory on localhost", async () => {
@@ -260,8 +252,8 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).to.be.calledOnce;
-      expect(failedCb).not.to.be.called;
+      sinon.assert.calledOnce(finishedCb);
+      sinon.assert.notCalled(failedCb);
       expect(request.lastOutput).to.equal(hostname + "\n");
     });
     it("should issue command directory on localhost and get stderr", async () => {
@@ -281,8 +273,8 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).to.be.calledOnce;
-      expect(failedCb).not.to.be.called;
+      sinon.assert.calledOnce(finishedCb);
+      sinon.assert.notCalled(failedCb);
       expect(request.lastOutput).to.equal(hostname + "\n");
     });
     it("should keep watching if cmd returns empty string and it does not match re", async () => {
