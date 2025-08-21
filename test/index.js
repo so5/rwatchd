@@ -1,24 +1,16 @@
-"use strict";
-process.on("unhandledRejection", console.dir); // eslint-disable-line no-console
-Error.traceLimit = 100000;
-const os = require("os");
-
-// setup test framework
-const chai = require("chai");
-const { expect } = chai;
-const sinon = require("sinon");
-chai.use(require("sinon-chai"));
-
-// helper
-const hostInfo = require("./testUtil/hostInfo.js");
-
-// testee
-const {
+import os from "os";
+import { expect } from "chai";
+import sinon from "sinon";
+import hostInfo from "./testUtil/hostInfo.js";
+import {
   addRequest,
   delRequest,
   getRequest,
   clearAll
-} = require("../lib/index.js");
+} from "../lib/index.js";
+
+process.on("unhandledRejection", console.dir); // eslint-disable-line no-console
+Error.traceLimit = 100000;
 
 describe("e2e test for rwatch core lib", function () {
   this.timeout(20000);
@@ -200,9 +192,9 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).not.to.be.called;
-      expect(checkedCb).to.be.calledOnce;
-      expect(failedCb).to.be.calledOnce;
+      expect(finishedCb.called).to.be.false;
+      expect(checkedCb.calledOnce).to.be.true;
+      expect(failedCb.calledOnce).to.be.true;
     });
     it("should emit 'failed' if until is set and re never match", async () => {
       arg2.re = "hoge";
@@ -217,9 +209,9 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).not.to.be.called;
-      expect(checkedCb).to.be.calledOnce;
-      expect(failedCb).to.be.calledOnce;
+      expect(finishedCb.called).to.be.false;
+      expect(checkedCb.calledOnce).to.be.true;
+      expect(failedCb.calledOnce).to.be.true;
     });
     it("should consolidate arguments for same command on same host", async () => {
       arg2.cmd = "echo";
@@ -239,8 +231,8 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).to.be.calledOnce;
-      expect(failedCb).not.to.be.called;
+      expect(finishedCb.calledOnce).to.be.true;
+      expect(failedCb.called).to.be.false;
       expect(request.lastOutput).to.be.equal("1 2 3 4 5\n");
     });
     it("should issue command directory on localhost", async () => {
@@ -260,8 +252,8 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).to.be.calledOnce;
-      expect(failedCb).not.to.be.called;
+      expect(finishedCb.calledOnce).to.be.true;
+      expect(failedCb.called).to.be.false;
       expect(request.lastOutput).to.equal(hostname + "\n");
     });
     it("should issue command directory on localhost and get stderr", async () => {
@@ -281,8 +273,8 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).to.be.calledOnce;
-      expect(failedCb).not.to.be.called;
+      expect(finishedCb.calledOnce).to.be.true;
+      expect(failedCb.called).to.be.false;
       expect(request.lastOutput).to.equal(hostname + "\n");
     });
     it("should keep watching if cmd returns empty string and it does not match re", async () => {
@@ -298,9 +290,9 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).not.to.be.called;
-      expect(checkedCb).to.have.callCount(3);
-      expect(failedCb).to.be.calledOnce;
+      expect(finishedCb.called).to.be.false;
+      expect(checkedCb.callCount).to.equal(3);
+      expect(failedCb.calledOnce).to.be.true;
     });
     it("should keep watching if cmd returns empty string and it does not match re numAllowFirstFewEmptyOutput times", async () => {
       arg2.cmd = "echo";
@@ -314,9 +306,9 @@ describe("e2e test for rwatch core lib", function () {
       await new Promise((resolve) => {
         request.event.on("done", resolve);
       });
-      expect(finishedCb).to.be.calledOnce;
-      expect(checkedCb).to.have.callCount(2);
-      expect(failedCb).not.to.be.called;
+      expect(finishedCb.calledOnce).to.be.true;
+      expect(checkedCb.callCount).to.equal(2);
+      expect(failedCb.called).to.be.false;
     });
     describe("test about hook", () => {
       const hostname = os.hostname();
@@ -333,8 +325,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(finishedCb).to.be.calledOnce;
-        expect(failedCb).not.to.be.called;
+        expect(finishedCb.calledOnce).to.be.true;
+        expect(failedCb.called).to.be.false;
         expect(request.finishedHook.rt).to.equal(0);
         expect(request.finishedHook.output).to.equal("foo\n");
         expect(request.failedHook.rt).to.be.undefined;
@@ -354,8 +346,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(failedCb).to.be.calledOnce;
-        expect(finishedCb).not.to.be.called;
+        expect(failedCb.calledOnce).to.be.true;
+        expect(finishedCb.called).to.be.false;
         expect(request.failedHook.rt).to.equal(0);
         expect(request.failedHook.output).to.equal("bar\n");
         expect(request.finishedHook.rt).to.be.undefined;
@@ -374,8 +366,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(finishedCb).to.be.calledOnce;
-        expect(failedCb).not.to.be.called;
+        expect(finishedCb.calledOnce).to.be.true;
+        expect(failedCb.called).to.be.false;
         expect(request.doneHook.rt).to.equal(0);
         expect(request.doneHook.output).to.equal("foo\n");
         expect(request.failedHook.rt).to.be.undefined;
@@ -395,8 +387,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(failedCb).to.be.calledOnce;
-        expect(finishedCb).not.to.be.called;
+        expect(failedCb.calledOnce).to.be.true;
+        expect(finishedCb.called).to.be.false;
         expect(request.doneHook.rt).to.equal(0);
         expect(request.doneHook.output).to.equal("bar\n");
         expect(request.finishedHook.rt).to.be.undefined;
@@ -416,8 +408,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(finishedCb).to.be.calledOnce;
-        expect(failedCb).not.to.be.called;
+        expect(finishedCb.calledOnce).to.be.true;
+        expect(failedCb.called).to.be.false;
         expect(request.finishedLocalHook.rt).to.equal(0);
         expect(request.finishedLocalHook.output).to.equal(hostname);
         expect(request.failedHook.rt).to.be.undefined;
@@ -437,8 +429,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(failedCb).to.be.calledOnce;
-        expect(finishedCb).not.to.be.called;
+        expect(failedCb.calledOnce).to.be.true;
+        expect(finishedCb.called).to.be.false;
         expect(request.failedLocalHook.rt).to.equal(0);
         expect(request.failedLocalHook.output).to.equal(hostname);
         expect(request.finishedHook.rt).to.be.undefined;
@@ -457,8 +449,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(finishedCb).to.be.calledOnce;
-        expect(failedCb).not.to.be.called;
+        expect(finishedCb.calledOnce).to.be.true;
+        expect(failedCb.called).to.be.false;
         expect(request.doneLocalHook.rt).to.equal(0);
         expect(request.doneLocalHook.output).to.equal(hostname);
         expect(request.failedHook.rt).to.be.undefined;
@@ -478,8 +470,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(failedCb).to.be.calledOnce;
-        expect(finishedCb).not.to.be.called;
+        expect(failedCb.calledOnce).to.be.true;
+        expect(finishedCb.called).to.be.false;
         expect(request.doneLocalHook.rt).to.equal(0);
         expect(request.doneLocalHook.output).to.equal(hostname);
         expect(request.finishedHook.rt).to.be.undefined;
@@ -501,8 +493,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(finishedCb).not.to.be.called;
-        expect(failedCb).to.be.calledOnce;
+        expect(finishedCb.called).to.be.false;
+        expect(failedCb.calledOnce).to.be.true;
         expect(request.doneHook.rt).to.be.undefined;
         expect(request.doneHook.output).to.be.a("string").and.empty;
         expect(request.failedHook.rt).to.be.undefined;
@@ -521,8 +513,8 @@ describe("e2e test for rwatch core lib", function () {
         await new Promise((resolve) => {
           request.event.on("done", resolve);
         });
-        expect(finishedCb).to.be.called;
-        expect(failedCb).not.to.be.calledOnce;
+        expect(finishedCb.called).to.be.true;
+        expect(failedCb.calledOnce).to.be.false;
         expect(request.doneLocalHook.rt).to.be.undefined;
         expect(request.doneLocalHook.output).to.be.undefined;
         expect(request.finishedHook.rt).to.equal(127);

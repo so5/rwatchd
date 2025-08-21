@@ -1,5 +1,4 @@
-"use strict";
-module.exports = {
+export default {
   host: process.env.TEST_HOST || "localhost",
   user: process.env.TEST_USER || "testuser",
   port: process.env.TEST_PORT || "4000",

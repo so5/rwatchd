@@ -1,6 +1,0 @@
-{
-  "eslint": [
-    ".eslintrc.json",
-    "*/.eslintrc.json"
-  ]
-}
