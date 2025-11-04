@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/so5/rwatchd/compare/v1.0.0...v1.0.1) (2025-11-04)
+
+
+### Bug Fixes
+
+* upgrade debug from 4.4.1 to 4.4.3 ([3a87a27](https://github.com/so5/rwatchd/commit/3a87a27d6fd8d3c73a29ca0e439eba131aa43ed1))
+
 # [1.0.0](https://github.com/so5/rwatchd/compare/v0.7.1...v1.0.0) (2025-08-21)
 
 
