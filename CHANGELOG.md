@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/so5/rwatchd/compare/v1.0.1...v1.1.0) (2025-11-06)
+
+
+### Features
+
+* Add .npmignore to exclude unnecessary files ([#21](https://github.com/so5/rwatchd/issues/21)) ([6da8ac3](https://github.com/so5/rwatchd/commit/6da8ac386120adfad9e96ed3e2fb8af32d789e3d))
+
 ## [1.0.1](https://github.com/so5/rwatchd/compare/v1.0.0...v1.0.1) (2025-11-04)
 
 
