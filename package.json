@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "Remote WATCH Daemon",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "type": "module",
   "engines": {
     "node": ">=19"
