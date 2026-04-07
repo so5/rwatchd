@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/so5/rwatchd/compare/v1.1.0...v1.1.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([#27](https://github.com/so5/rwatchd/issues/27)) ([b3c2158](https://github.com/so5/rwatchd/commit/b3c2158140f887cea6be30c65bdca40bbdbf741e))
+* upgrade ssh-client-wrapper from 2.13.1 to 2.14.0 ([#23](https://github.com/so5/rwatchd/issues/23)) ([3a8227a](https://github.com/so5/rwatchd/commit/3a8227abaecee0272cf265f49a4f52e265acdfc8))
+
 # [1.1.0](https://github.com/so5/rwatchd/compare/v1.0.1...v1.1.0) (2025-11-06)
 
 
