@@ -1,3 +1,20 @@
+# [1.2.0](https://github.com/so5/rwatchd/compare/v1.1.1...v1.2.0) (2026-07-18)
+
+
+### Bug Fixes
+
+* fall back to package.json diff when dependabot update-type is null ([c7f9c5c](https://github.com/so5/rwatchd/commit/c7f9c5c050dd9bdb079000792d966ad204d6d64f))
+* match dependabot/snyk bot logins as reported by gh pr list --json ([7716f88](https://github.com/so5/rwatchd/commit/7716f88c6062153467ccadd41c4f64b2380599b7))
+* proactively update PR branch before enabling auto-merge ([ab6a80d](https://github.com/so5/rwatchd/commit/ab6a80de3166c3d5b9a65dabda2903c480698b67))
+* use admin PAT for release checkout so branch protection doesn't block it ([42aa197](https://github.com/so5/rwatchd/commit/42aa197bf8bdd60f5c5adc5970ecee282aef451d))
+
+
+### Features
+
+* auto-approve and auto-merge patch/minor bot dependency PRs ([cfddd2c](https://github.com/so5/rwatchd/commit/cfddd2c11682b2f5c42619b16e63315c0e84842e))
+* include package/version details in Slack major-update notice ([0e5d188](https://github.com/so5/rwatchd/commit/0e5d1889056f7b55e90858e9e2367b5aa38d8810))
+* periodically unstick behind bot PRs with auto-merge enabled ([9b600bc](https://github.com/so5/rwatchd/commit/9b600bcf9032f79ed399fdba33da7e0df5cfd936))
+
 ## [1.1.1](https://github.com/so5/rwatchd/compare/v1.1.0...v1.1.1) (2026-04-07)
 
 
