@@ -1,7 +1,7 @@
 [![npm version](https://badge.fury.io/js/rwatchd.svg)](https://badge.fury.io/js/rwatchd)
 [![Known Vulnerabilities](https://snyk.io/test/github/so5/rwatchd/badge.svg)](https://snyk.io/test/github/so5/rwatchd)
 [![Coverage Status](https://coveralls.io/repos/github/so5/rwatchd/badge.svg?branch=main)](https://coveralls.io/github/so5/rwatchd?branch=main)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f10b4f803fe1b775a028/maintainability)](https://codeclimate.com/github/so5/rwatchd/maintainability)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=so5_rwatchd&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=so5_rwatchd)
 
 # rwatchd
 Remote WATCH Daemon
