@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/so5/rwatchd/compare/v1.2.0...v1.2.1) (2026-07-20)
+
+
+### Bug Fixes
+
+* replace defunct Code Climate coverage reporting with Coveralls ([63e5e5d](https://github.com/so5/rwatchd/commit/63e5e5d8bbc4aa83673dbae3271344d0986b68c5))
+
 # [1.2.0](https://github.com/so5/rwatchd/compare/v1.1.1...v1.2.0) (2026-07-18)
 
 
