@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/so5/rwatchd/compare/v1.2.1...v1.2.2) (2026-10-07)
+
+
+### Bug Fixes
+
+* **engines:** set Node requirement to >=20 ([#59](https://github.com/so5/rwatchd/issues/59)) ([47947bf](https://github.com/so5/rwatchd/commit/47947bf276f7fdcb9e23bb1f677c0a6f729b033a))
+
 ## [1.2.1](https://github.com/so5/rwatchd/compare/v1.2.0...v1.2.1) (2026-07-20)
 
 
