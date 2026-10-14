@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/so5/rwatchd/compare/v1.2.2...v1.2.3) (2026-10-14)
+
+
+### Bug Fixes
+
+* **deps:** bump ssh-client-wrapper to ^3.1.0 ([#60](https://github.com/so5/rwatchd/issues/60)) ([a0390f5](https://github.com/so5/rwatchd/commit/a0390f51c72f767619ef31174eae8d9b07e49d25))
+
 ## [1.2.2](https://github.com/so5/rwatchd/compare/v1.2.1...v1.2.2) (2026-10-07)
 
 
