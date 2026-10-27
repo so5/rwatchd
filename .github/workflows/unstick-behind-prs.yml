@@ -14,8 +14,10 @@ name: Unstick behind bot PRs
 #   with push access can use that command". So it is posted with a personal
 #   access token: DEPENDABOT_REBASE_TOKEN if set, otherwise the
 #   SEMANTIC_RELEASE_TOKEN of the release workflow;
-# - update-branch is not used for them because it would make Dependabot
-#   refuse later rebases and leave the new head's workflows awaiting approval.
+# - update-branch with GITHUB_TOKEN is not used for them because it would make
+#   Dependabot refuse later rebases and leave the new head's workflows awaiting
+#   approval. update-branch with the personal access token (workflows run
+#   normally for its pushes) is the fallback when the token can not comment.
 on:
   schedule:
     - cron: "*/30 * * * *"
@@ -55,8 +57,14 @@ jobs:
                     continue
                   fi
                   echo "PR #$num is behind with auto-merge enabled - asking Dependabot to rebase"
-                  GH_TOKEN="$REBASE_TOKEN" gh pr comment "$num" --repo "$REPO" --body "@dependabot rebase" \
-                    || echo "::warning::could not comment on PR #$num" ;;
+                  if ! GH_TOKEN="$REBASE_TOKEN" gh pr comment "$num" --repo "$REPO" --body "@dependabot rebase"; then
+                    # The token can not comment (e.g. a fine-grained PAT which only has "Contents").
+                    # Update the branch with it instead: a push made with a personal access token
+                    # runs the workflows normally. Dependabot will not rebase this PR any more.
+                    echo "::warning::could not comment on PR #$num, updating the branch with the token instead"
+                    GH_TOKEN="$REBASE_TOKEN" gh api --method PUT "repos/$REPO/pulls/$num/update-branch" \
+                      || echo "::warning::could not update the branch of PR #$num"
+                  fi ;;
                 *)
                   echo "PR #$num is behind with auto-merge enabled - requesting branch update"
                   gh api --method PUT "repos/$REPO/pulls/$num/update-branch" || true ;;
