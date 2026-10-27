@@ -7,6 +7,15 @@ name: Unstick behind bot PRs
 # advanced the base branch) can get stuck indefinitely with no PR event to
 # trigger dependency-pr-automerge.yml's own update-branch step. Run this
 # independently of PR events to catch and fix that case.
+#
+# Dependabot PRs are rebased by asking Dependabot (`@dependabot rebase`):
+# - the comment must come from a user with push access. A comment made with
+#   the workflow's GITHUB_TOKEN (github-actions) is refused with "only users
+#   with push access can use that command". So it is posted with a personal
+#   access token: DEPENDABOT_REBASE_TOKEN if set, otherwise the
+#   SEMANTIC_RELEASE_TOKEN of the release workflow;
+# - update-branch is not used for them because it would make Dependabot
+#   refuse later rebases and leave the new head's workflows awaiting approval.
 on:
   schedule:
     - cron: "*/30 * * * *"
@@ -23,19 +32,33 @@ jobs:
       - name: Update behind bot PRs with auto-merge enabled
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REBASE_TOKEN: ${{ secrets.DEPENDABOT_REBASE_TOKEN || secrets.SEMANTIC_RELEASE_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          gh pr list --repo "${{ github.repository }}" --state open \
+          gh pr list --repo "$REPO" --state open \
             --json number,author,autoMergeRequest,mergeStateStatus \
             --jq '.[] | select(.autoMergeRequest != null) | select(.mergeStateStatus == "BEHIND") | select(.author.login | IN("dependabot[bot]", "app/dependabot", "snyk-bot", "app/snyk-bot")) | "\(.number) \(.author.login)"' \
           | while read -r num author; do
               case "$author" in
                 *dependabot*)
-                  # update-branch would make Dependabot refuse later rebases and
-                  # leave the new head's workflows awaiting approval.
+                  if [ -z "$REBASE_TOKEN" ]; then
+                    echo "::warning::PR #$num is behind, but neither DEPENDABOT_REBASE_TOKEN nor SEMANTIC_RELEASE_TOKEN is set. Can not ask Dependabot to rebase."
+                    continue
+                  fi
+                  # do not repeat the request while Dependabot is still working on the previous one
+                  head=$(gh pr view "$num" --repo "$REPO" --json headRefOid --jq .headRefOid)
+                  head_date=$(gh api "repos/$REPO/commits/$head" --jq .commit.committer.date)
+                  last=$(gh api "repos/$REPO/issues/$num/comments" --paginate --jq '.[] | select(.body == "@dependabot rebase") | .created_at' | sort | tail -n 1)
+                  limit=$(date -u -d '3 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+                  if [ -n "$last" ] && [[ "$last" > "$head_date" ]] && [[ "$last" > "$limit" ]]; then
+                    echo "PR #$num is behind, rebase was already requested at $last - waiting"
+                    continue
+                  fi
                   echo "PR #$num is behind with auto-merge enabled - asking Dependabot to rebase"
-                  gh pr comment "$num" --repo "${{ github.repository }}" --body "@dependabot rebase" || true ;;
+                  GH_TOKEN="$REBASE_TOKEN" gh pr comment "$num" --repo "$REPO" --body "@dependabot rebase" \
+                    || echo "::warning::could not comment on PR #$num" ;;
                 *)
                   echo "PR #$num is behind with auto-merge enabled - requesting branch update"
-                  gh api --method PUT "repos/${{ github.repository }}/pulls/$num/update-branch" || true ;;
+                  gh api --method PUT "repos/$REPO/pulls/$num/update-branch" || true ;;
               esac
             done
